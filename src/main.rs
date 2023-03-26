@@ -263,8 +263,7 @@ impl RwSegment {
                 self.gm.set_instances(&self.instances);
             } else {break;}
                 
-                
-            }
         }
     }
+}
 
