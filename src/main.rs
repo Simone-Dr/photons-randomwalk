@@ -32,7 +32,7 @@ pub async fn run() {
         0.1,
         10000.0,
     );
-    let mut control = OrbitControl::new(*camera.target(), 0.1 * scene_radius, 1.5 * scene_radius);
+    let mut control = OrbitControl::new(*camera.target(), 0.1 * scene_radius, 2.0 * scene_radius);
 
     // Load Sphere object
     let mut loaded = three_d_asset::io::load_async(&["assets/sphere.obj"])

@@ -6,8 +6,8 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-three-d = {git = "https://github.com/asny/three-d"}
-three-d-asset = {git="https://github.com/asny/three-d-asset",features = ["obj", "http"] }
+three-d = {git = "https://github.com/asny/three-d", rev="fdc5097"}
+three-d-asset = {version="0.5",features = ["obj", "http"] }
 rand = "0.8.5"
 #wasm-bindgen = "0.2"
 #tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
