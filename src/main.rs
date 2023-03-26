@@ -95,7 +95,7 @@ pub async fn run() {
         redraw |= control.handle_events(&mut camera, &mut frame_input.events);
         redraw = true;
         
-        rw.next(100, 1000);
+        rw.next(10, 10);
         
         
         if redraw { // if first frame, or changed viewport or event
@@ -238,7 +238,7 @@ impl RwSegment {
         if !self.in_sun {return};
         
         let mut rng = rand::thread_rng(); // random
-        let val = 1e-2;                          // how long each step is
+        let val = 0.2;                          // how long each step is
         for _ in 0..steps_before_render {      // as often as how many lines are drawn at once 
             let start_pos = self.f_pos;
             let mut new_pos= vec3(0.0, 0.0, 0.0);
