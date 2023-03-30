@@ -1,17 +1,17 @@
 <html>
   <head>
     <meta content="text/html;charset=utf-8" http-equiv="Content-Type"/>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css?family=Abel" rel="stylesheet">
   </head>
   <body>
     <canvas style="position: absolute;top:0;bottom: 0;left: 0;right: 0;margin:auto;border : 2px solid black"></canvas>
     <!-- Note the usage of `type=module` here as this is an ES6 module -->
     <script type="module">
       import init from './pkg/web.js';
-
       async function run() {
         await init('./pkg/web_bg.wasm');
       }
-
       run();
     </script>
   </body>

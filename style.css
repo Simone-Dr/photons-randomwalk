@@ -1,0 +1,9 @@
+body {
+  font-family: 'Abel';
+  margin: 0;
+  font-size:17px;
+  line-height:1.5; 
+  color: rgb(40,40,40); 
+  background: #F4F4F4; 
+  overflow-x: hidden;
+}
