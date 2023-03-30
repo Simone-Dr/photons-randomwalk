@@ -3,8 +3,8 @@ body {
   margin: 0;
   font-size:17px;
   line-height:1.5; 
-  color: rgb(40,40,40); 
-  background: #F4F4F4; 
+  color: #F4F4F4; 
+  background: rgb(40, 40, 40); 
   overflow-x: hidden;
   text-align: center;  
 }
