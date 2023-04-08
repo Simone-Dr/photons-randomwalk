@@ -16,3 +16,15 @@ pub async fn start() -> Result<(), JsValue> {
     main::run().await;
     Ok(())
 }
+
+#[cfg(target_arch = "wasm32")]
+#[wasm_bindgen]
+extern {
+    pub fn alert(s: &str);
+}
+
+#[cfg(target_arch = "wasm32")]
+#[wasm_bindgen]
+pub fn greet(name: &str) {
+    alert(&format!("Hello, {}!", name));
+}

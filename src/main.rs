@@ -10,7 +10,7 @@ async fn main() {
 
 pub async fn run() {
     // Create a window (a canvas on web)
-    let window = Window::new(WindowSettings {
+        let window = Window::new(WindowSettings {
         title: "test".to_string(),
         max_size: Some((1280, 720)),
         ..Default::default()
@@ -65,6 +65,7 @@ pub async fn run() {
     let directional1 = DirectionalLight::new(&context, 2.0, Color::WHITE, &vec3(1.0, 1.0, 1.0));
 
     let mut rw = RwSegment::new(&context, Color {r: 235, g: 201, b: 52, a: 200,});
+    let mut rw2 = RwSegment::new(&context, Color {r: 235, g: 12, b: 200, a: 200,});
     
     // main loop
     window.render_loop(move |mut frame_input| {
@@ -73,6 +74,22 @@ pub async fn run() {
         
         
         rw.next(5, 2);
+        rw2.next(5, 2);
+        
+                        
+        let cyl = vec![ &rw.gm, &rw2.gm].into_iter()
+        .fold(Vec::new(), |mut acc, v| {
+            acc.extend(v);
+            acc
+        });
+        
+        let sph = vec![ &rw.gm_sphere, &rw2.gm_sphere].into_iter()
+        .fold(Vec::new(), |mut acc, v| {
+            acc.extend(v);
+            acc
+        });
+        
+        
         
         
         frame_input
@@ -80,7 +97,7 @@ pub async fn run() {
             .clear(ClearState::color_and_depth(1.0, 1.0, 1.0, 0.0, 1.0))
             .render(
                 &camera,
-                model.into_iter().chain(&rw.gm).chain(&rw.gm_sphere),
+                model.into_iter().chain(cyl).chain(sph),
                 &[&ambient, &directional0, &directional1],
             );
         
@@ -178,4 +195,5 @@ impl RwSegment {
         }
     }
 }
+
 
