@@ -69,6 +69,7 @@ pub async fn run() {
     
     let mut gui = three_d::GUI::new(&context);
     let mut rng = rand::thread_rng(); // random
+    let mut drawn_at_once = 2;
     
     // main loop
     window.render_loop(move |mut frame_input| {
@@ -82,6 +83,7 @@ pub async fn run() {
                 use three_d::egui::*;
                 SidePanel::left("side_panel").show(gui_context, |ui| {
                     ui.heading("Settings");
+                    ui.add(Slider::new(&mut drawn_at_once, 1..=20).text("steps at once"));                                        
                     if ui.button("Add Photon").clicked() {
                         rw_vec.push(RwSegment::new(&context, Color {r: rng.gen_range(0..255) as u8, g: rng.gen_range(0..255) as u8, b: rng.gen_range(0..255) as u8, a: 200,}));
                    }
@@ -107,7 +109,7 @@ pub async fn run() {
         gm_sphere_vec.clear();
         
         for rw_i in rw_vec.iter_mut() {
-            rw_i.next(5, 2);
+            rw_i.next(5, drawn_at_once);
         };
         
         let gm_vec: Vec<_> = rw_vec
@@ -227,7 +229,6 @@ impl RwSegment {
                     self.steps += 1;
                     if self.f_pos.magnitude() > 100.0{
                         self.in_sun = false;
-                        print!("{:?}", self.steps);
                     }
                 } else {break;}
             }
