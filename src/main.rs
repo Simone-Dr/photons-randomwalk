@@ -63,32 +63,75 @@ pub async fn run() {
     let ambient = AmbientLight::new(&context, 0.7, Color::WHITE);
     let directional0 = DirectionalLight::new(&context, 2.0, Color::WHITE, &vec3(-1.0, -1.0, -1.0));
     let directional1 = DirectionalLight::new(&context, 2.0, Color::WHITE, &vec3(1.0, 1.0, 1.0));
-
-    let mut rw = RwSegment::new(&context, Color {r: 235, g: 201, b: 52, a: 200,});
-    let mut rw2 = RwSegment::new(&context, Color {r: 235, g: 12, b: 200, a: 200,});
+    
+    let mut rw_vec = vec![RwSegment::new(&context, Color {r: 235, g: 201, b: 52, a: 200,})];
+    let mut gm_sphere_vec:Vec<&Gm<Mesh, PhysicalMaterial>> = vec![];
+    
+    let mut gui = three_d::GUI::new(&context);
+    let mut rng = rand::thread_rng(); // random
     
     // main loop
     window.render_loop(move |mut frame_input| {
-        camera.set_viewport(frame_input.viewport);
+        let mut panel_width = 0.0;
+        gui.update(
+            &mut frame_input.events,
+            frame_input.accumulated_time,
+            frame_input.viewport,
+            frame_input.device_pixel_ratio,
+            |gui_context| {
+                use three_d::egui::*;
+                SidePanel::left("side_panel").show(gui_context, |ui| {
+                    ui.heading("Settings");
+                    if ui.button("Add Photon").clicked() {
+                        rw_vec.push(RwSegment::new(&context, Color {r: rng.gen_range(0..255) as u8, g: rng.gen_range(0..255) as u8, b: rng.gen_range(0..255) as u8, a: 200,}));
+                   }
+                   for rw_i in rw_vec.iter() {
+                        ui.colored_label(Color32::from_rgb(rw_i.col.r, rw_i.col.g, rw_i.col.b ), format!("Steps '{}'.", rw_i.steps));
+                    };
+                });
+                panel_width = gui_context.used_rect().width();
+            },
+        );
+        
+        
+        let viewport = Viewport {
+            x: (panel_width * (frame_input.device_pixel_ratio as f32)) as i32,
+            y: 0,
+            width: frame_input.viewport.width
+                - (panel_width * (frame_input.device_pixel_ratio as f32)) as u32,
+            height: frame_input.viewport.height,
+        };
+        camera.set_viewport(viewport);
         control.handle_events(&mut camera, &mut frame_input.events);
         
+        gm_sphere_vec.clear();
         
-        rw.next(5, 2);
-        rw2.next(5, 2);
+        for rw_i in rw_vec.iter_mut() {
+            rw_i.next(5, 2);
+        };
         
+        let gm_vec: Vec<_> = rw_vec
+        .iter()
+        .map(|rw| &rw.gm)
+        .collect(); 
+        
+        let gm_sphere_vec: Vec<_> = rw_vec
+        .iter()
+        .map(|rw| &rw.gm_sphere)
+        .collect(); 
+     //TODO
                         
-        let cyl = vec![ &rw.gm, &rw2.gm].into_iter()
+        let cyl = gm_vec.into_iter()
         .fold(Vec::new(), |mut acc, v| {
             acc.extend(v);
             acc
         });
         
-        let sph = vec![ &rw.gm_sphere, &rw2.gm_sphere].into_iter()
+        let sph = gm_sphere_vec.into_iter()
         .fold(Vec::new(), |mut acc, v| {
             acc.extend(v);
             acc
         });
-        
         
         
         
@@ -99,7 +142,8 @@ pub async fn run() {
                 &camera,
                 model.into_iter().chain(cyl).chain(sph),
                 &[&ambient, &directional0, &directional1],
-            );
+            )            
+            .write(|| gui.render());
         
         
 
@@ -128,6 +172,7 @@ struct RwSegment{
     in_sun: bool,
     steps: i64,
     gm_sphere: Gm<Mesh, PhysicalMaterial>,
+    col: Color,
 }
 
 impl RwSegment {
@@ -160,6 +205,7 @@ impl RwSegment {
             gm_sphere: Gm::new(
         Mesh::new(&context, &CpuMesh::sphere(16)),
         physMat,),
+            col
         }
     }
     
